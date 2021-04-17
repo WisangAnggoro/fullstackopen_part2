@@ -13,9 +13,13 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    let newPerson = {name : newName}
-    setPersons([...persons, newPerson])
-    setNewName('')
+    if(persons.map(person => person.name).indexOf(newName)!==-1) {
+      alert(`${newName} is already added to phonebook`)
+    } else {
+      let newPerson = {name : newName}
+      setPersons([...persons, newPerson])
+      setNewName('')
+    }
   }
 
   return (
