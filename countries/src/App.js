@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
-const Countries = ({countries}) => {
+const Countries = ({countries, changeFilter}) => {
   if(countries.length > 10)
   {
     return (
@@ -16,7 +16,7 @@ const Countries = ({countries}) => {
       <div>
         {
           countries.map((country,index) => 
-            <p key={index}>{country.name}</p>  
+            <p key={index}>{country.name} <button onClick={() => changeFilter(country.name)}>show</button> </p>  
           )
         }
       </div>
@@ -56,6 +56,10 @@ const App = () => {
     setFilterCountry(event.target.value)
   }
 
+  const changeFilter = (filter) => {
+    setFilterCountry(filter)
+  }
+
   useEffect(() => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
@@ -72,7 +76,10 @@ const App = () => {
         value={filterCountry}
         onChange={handleFilterChange}
       />
-      <Countries countries={visibleCountries}/>
+      <Countries 
+        countries={visibleCountries}
+        changeFilter={changeFilter}
+      />
     </div>
   );
 }
