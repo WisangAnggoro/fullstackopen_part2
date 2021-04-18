@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Filter = ({handleChange}) => {
   return(
@@ -37,39 +38,34 @@ const Numbers = ({persons}) => {
   return (
     <div>
       {
-        persons.map(person => <p>{person.name} {person.number}</p>)
+        persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)
       }
     </div>
   )
 }
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { 
-      name: 'Arto Hellas',
-      number: '082220486790'
-    }
-  ]) 
+  const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('');  
   const [ filter, setFilter] = useState('');
 
   const filteredPersons = filter!==''
-    ? persons.filter(person => person.name.indexOf(filter)!==-1)
-    : persons
-
+  ? persons.filter(person => person.name.indexOf(filter)!==-1)
+  : persons
+  
   const handleNoteChange = (event) => {
     setNewName(event.target.value)
   }
-
+  
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
-
+  
   const handleFilter = (event) => {
     setFilter(event.target.value)
   }
-
+  
   const handleSubmit = (event) => {
     event.preventDefault()
     if(persons.map(person => person.name).indexOf(newName)!==-1) {
@@ -85,6 +81,14 @@ const App = () => {
     }
   }
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then((response) => {
+        setPersons(response.data)
+      })
+  }, []);
+  
   return (
     <div>
       <h2>Phonebook</h2>
