@@ -71,13 +71,22 @@ const App = () => {
     if(persons.map(person => person.name).indexOf(newName)!==-1) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      let newPerson = {
+      const newPerson = {
         name : newName,
-        number : newNumber
+        number : newNumber,
+        id : 0
       }
-      setPersons([...persons, newPerson])
-      setNewName('')
-      setNewNumber('')
+      axios
+        .post('http://localhost:3001/persons', newPerson)
+        .then(response => {
+          newPerson.id = response.data.id
+          setPersons([...persons, newPerson])
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          console.log('error happened');
+        })
     }
   }
 
@@ -86,6 +95,9 @@ const App = () => {
       .get('http://localhost:3001/persons')
       .then((response) => {
         setPersons(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
       })
   }, []);
   
