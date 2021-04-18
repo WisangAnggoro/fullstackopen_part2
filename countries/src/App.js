@@ -56,10 +56,6 @@ const App = () => {
     setFilterCountry(event.target.value)
   }
 
-  const changeFilter = (filter) => {
-    setFilterCountry(filter)
-  }
-
   useEffect(() => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
@@ -78,7 +74,7 @@ const App = () => {
       />
       <Countries 
         countries={visibleCountries}
-        changeFilter={changeFilter}
+        changeFilter={setFilterCountry}
       />
     </div>
   );
