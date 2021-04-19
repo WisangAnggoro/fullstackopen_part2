@@ -73,14 +73,18 @@ const App = () => {
   
   const handleSubmit = (event) => {
     event.preventDefault()
+    const newPerson = {
+      name : newName,
+      number : newNumber,
+      id : 0
+    }
     if(persons.map(person => person.name).indexOf(newName)!==-1) {
-      alert(`${newName} is already added to phonebook`)
-    } else {
-      const newPerson = {
-        name : newName,
-        number : newNumber,
-        id : 0
+      const updateConfirm = window.confirm(`${newName} is already added to phonebook, replace old number?`)
+      if(updateConfirm){
+        newPerson.id = persons.find(person => person.name===newName).id
+        handleUpdate(newPerson)
       }
+    } else {
       phonebookService
         .create(newPerson)
         .then(response => {
@@ -90,24 +94,38 @@ const App = () => {
           setNewNumber('')
         })
         .catch(error => {
-          console.log('error happened');
+          console.log(error);
         })
     }
   }
 
+  const handleUpdate = (object) => {
+    const filteredPersons = [...persons.filter(person => person.id!==object.id)]
+    phonebookService
+      .update(object.id, object)
+      .then(response => {
+        setPersons([...filteredPersons, object])
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
   const handleDelete = (id) => {
-    console.log(id);
+    const deleteConfirm = !window.confirm(`delete ${persons.find(person => person.id===id).name}?`)
+    if(deleteConfirm){
+      return;
+    }
     const newPersons = [...persons.filter(person => person.id!==id)]
-    window.confirm(`delete ${persons.find(person => person.id===id).name}?`)
-    console.log(persons);
-    console.log(newPersons);
     phonebookService
       .del({id:id})
       .then(response => {
         setPersons(newPersons)
       })
       .catch(error => {
-        console.log();
+        console.log(error);
       })
   }
 
