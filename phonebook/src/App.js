@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebookService from './phonebookService'
+
 
 const Filter = ({handleChange}) => {
   return(
@@ -76,10 +77,10 @@ const App = () => {
         number : newNumber,
         id : 0
       }
-      axios
-        .post('http://localhost:3001/persons', newPerson)
+      phonebookService
+        .create(newPerson)
         .then(response => {
-          newPerson.id = response.data.id
+          newPerson.id = response.id
           setPersons([...persons, newPerson])
           setNewName('')
           setNewNumber('')
@@ -91,10 +92,10 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    phonebookService
+      .getAll()
       .then((response) => {
-        setPersons(response.data)
+        setPersons(response)
       })
       .catch((error) => {
         console.log(error);
