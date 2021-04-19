@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import phonebookService from './phonebookService'
+import './index.css'
 
+const Notification = ({ message, status }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={status}>
+      {message}
+    </div>
+  )
+}
 
 const Filter = ({handleChange}) => {
   return(
@@ -54,6 +66,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('');  
   const [ filter, setFilter] = useState('');
+  const [ notifMessage, setNotifMessage] = useState('');
+  const [ notifStatus, setNotifStatus] = useState('');
 
   const filteredPersons = filter!==''
   ? persons.filter(person => person.name.indexOf(filter)!==-1)
@@ -92,6 +106,8 @@ const App = () => {
           setPersons([...persons, newPerson])
           setNewName('')
           setNewNumber('')
+          setNotifMessage(`Added ${newPerson.name}`)
+          setNotifStatus('success')
         })
         .catch(error => {
           console.log(error);
@@ -107,9 +123,15 @@ const App = () => {
         setPersons([...filteredPersons, object])
         setNewName('')
         setNewNumber('')
+        setNotifMessage(`updated ${object.name}`)
+        setNotifStatus('success')
       })
       .catch(error => {
         console.log(error);
+        setNotifMessage(`${object.name} already deleted from server`)
+        setNotifStatus('error')
+        const newPersons = [...persons.filter(person => person.id!==object.id)]
+        setPersons(newPersons)
       })
   }
 
@@ -143,6 +165,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={notifMessage}
+        status={notifStatus}
+      />
       <Filter 
         handleChange={handleFilter}
       />
