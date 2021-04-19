@@ -35,11 +35,15 @@ const PersonForm = ({handleSubmit, handleNoteChange, newName, handleNumberChange
   )
 }
 
-const Numbers = ({persons}) => {
+const Numbers = ({persons, handleDelete}) => {
   return (
     <div>
       {
-        persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)
+        persons.map(person => 
+          <p key={person.id}>{person.name} {person.number} 
+            <button onClick={() => handleDelete(person.id)}>delete</button>
+          </p>
+        )
       }
     </div>
   )
@@ -91,6 +95,22 @@ const App = () => {
     }
   }
 
+  const handleDelete = (id) => {
+    console.log(id);
+    const newPersons = [...persons.filter(person => person.id!==id)]
+    window.confirm(`delete ${persons.find(person => person.id===id).name}?`)
+    console.log(persons);
+    console.log(newPersons);
+    phonebookService
+      .del({id:id})
+      .then(response => {
+        setPersons(newPersons)
+      })
+      .catch(error => {
+        console.log();
+      })
+  }
+
   useEffect(() => {
     phonebookService
       .getAll()
@@ -121,6 +141,7 @@ const App = () => {
       <h3>Numbers</h3>
       <Numbers 
         persons={filteredPersons}
+        handleDelete={handleDelete}
       />
     </div>
   )
